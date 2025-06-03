@@ -16,10 +16,10 @@
         /* Flower animation styles */
         .flower-container {
             display: flex;
+            flex-direction: column; /* To stack flower and text */
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* Changed background to shades of wine red */
             background: linear-gradient(to bottom right, #800020, #A52A2A); /* Deep Wine Red to Brownish Red */
             position: fixed;
             top: 0;
@@ -45,21 +45,20 @@
             border-radius: 50% 50% 0 0; /* Rounded top */
             transform-origin: bottom center;
             opacity: 0; /* Start hidden */
-            /* Adjusted top and left to center the petal's origin within the flower div */
-            top: -20px; /* (flower height / 2) - (petal height / 2) = 40 - 30 = 10. But origin is bottom, so it's (flower height / 2) - petal height = 40 - 60 = -20 */
-            left: 20px; /* (flower width / 2) - (petal width / 2) = 40 - 20 = 20 */
+            top: -20px;
+            left: 20px;
             animation: growPetal 2s forwards ease-out; /* Petal growth animation */
         }
 
-        /* Shades of blue for forget-me-not petals (retained as per previous request) */
-        .petal:nth-child(1) { transform: rotate(0deg); animation-delay: 0.5s; background-color: #BBDEFB; } /* Lightest Blue */
+        /* Shades of blue for forget-me-not petals */
+        .petal:nth-child(1) { transform: rotate(0deg); animation-delay: 0.5s; background-color: #BBDEFB; }
         .petal:nth-child(2) { transform: rotate(45deg); animation-delay: 0.6s; background-color: #90CAF9; }
         .petal:nth-child(3) { transform: rotate(90deg); animation-delay: 0.7s; background-color: #64B5F6; }
         .petal:nth-child(4) { transform: rotate(135deg); animation-delay: 0.8s; background-color: #42A5F5; }
-        .petal:nth-child(5) { transform: rotate(180deg); animation-delay: 0.9s; background-color: #2196F3; } /* Medium Blue */
+        .petal:nth-child(5) { transform: rotate(180deg); animation-delay: 0.9s; background-color: #2196F3; }
         .petal:nth-child(6) { transform: rotate(225deg); animation-delay: 1.0s; background-color: #1E88E5; }
         .petal:nth-child(7) { transform: rotate(270deg); animation-delay: 1.1s; background-color: #1976D2; }
-        .petal:nth-child(8) { transform: rotate(315deg); animation-delay: 1.2s; background-color: #1565C0; } /* Darkest Blue */
+        .petal:nth-child(8) { transform: rotate(315deg); animation-delay: 1.2s; background-color: #1565C0; }
 
         .center {
             position: absolute;
@@ -136,30 +135,36 @@
             100% { opacity: 0; transform: translateY(-100px) scale(0.5); }
         }
 
-        /* Music control button styling */
-        #musicControlBtn {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            padding: 0.5rem;
+        /* Tap to Continue Text */
+        .tap-to-continue {
+            margin-top: 2rem;
+            color: white;
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 700; /* font-bold */
+            opacity: 0; /* Start hidden */
+            animation: fadeInPulse 1.5s ease-out 3s forwards; /* Fade in and pulse after flower animation */
             cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1001; /* Above everything else */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        @keyframes fadeInPulse {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 1; }
+        }
+
+        .pulse-animation {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 via-pink-200 to-blue-200 p-4 sm:p-6">
-
-    <button id="musicControlBtn" class="flex items-center justify-center w-10 h-10 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-300">
-        <svg id="playIcon" class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
-        </svg>
-        <svg id="pauseIcon" class="w-6 h-6 text-gray-700 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-        </svg>
-    </button>
 
     <audio id="backgroundMusic" loop>
         <source src="Ben&Ben - Godsent (Lyric Video) - 128.mp3" type="audio/mpeg">
@@ -178,6 +183,9 @@
             <div class="petal" style="--rotation: 315deg;"></div>
             <div class="center"></div>
         </div>
+        <p id="tapToContinue" class="tap-to-continue">
+            Tap to Continue
+        </p>
     </div>
 
     <div id="mainContent" class="main-content bg-white p-8 sm:p-10 rounded-3xl shadow-2xl max-w-lg w-full text-center transform transition-transform duration-300 hover:scale-105 hover:ring-4 hover:ring-purple-400/50 flex flex-col items-center justify-center relative">
@@ -271,9 +279,7 @@
         const teddyBearElement = document.getElementById('teddyBear'); // Teddy bear SVG container
         const teddyBearMessageElement = document.getElementById('teddyBearMessage'); // Teddy bear's message display
         const backgroundMusic = document.getElementById('backgroundMusic'); // Audio element
-        const musicControlBtn = document.getElementById('musicControlBtn'); // Music control button
-        const playIcon = document.getElementById('playIcon');
-        const pauseIcon = document.getElementById('pauseIcon');
+        const tapToContinueElement = document.getElementById('tapToContinue'); // New: Tap to Continue element
 
 
         // Initialize SpeechSynthesisUtterance and SpeechSynthesis
@@ -284,18 +290,14 @@
         // Function to select a child-like voice
         function setChildVoice() {
             const voices = synth.getVoices();
-            // Try to find a voice that sounds like a child.
-            // Voice names can vary by browser/OS, so we look for common keywords.
             let childVoice = voices.find(voice =>
                 voice.lang === 'en-US' &&
                 (voice.name.includes('Kid') || voice.name.includes('Child') || voice.name.includes('Zira') || voice.name.includes('Junior'))
             );
 
-            // Fallback to a higher pitch if no specific child voice is found
             if (childVoice) {
                 utterance.voice = childVoice;
             } else {
-                // If no specific child voice, try to adjust pitch for a higher sound
                 utterance.pitch = 1.2; // Higher pitch
                 utterance.rate = 1.0; // Normal speed
             }
@@ -303,28 +305,25 @@
 
         // Load voices when they are ready (important for getVoices to work)
         synth.onvoiceschanged = setChildVoice;
-        // Call it once immediately in case voices are already loaded
-        setChildVoice();
+        setChildVoice(); // Call it once immediately in case voices are already loaded
 
 
         // Function to create and animate a floating icon (clover/star)
         function createFloatingIcon() {
             const icon = document.createElement('span');
-            // Randomly select between clover and star emojis
             icon.textContent = floatingEmojis[Math.floor(Math.random() * floatingEmojis.length)];
             icon.classList.add('floating-icon');
 
-            // Randomize starting position within the button's width
             const buttonRect = nextMessageBtn.getBoundingClientRect();
-            const startLeft = buttonRect.left + buttonRect.width / 2 - mainContent.getBoundingClientRect().left; // Centered above the button
-            const startBottom = mainContent.offsetHeight - (buttonRect.top - mainContent.getBoundingClientRect().top + buttonRect.height / 2); // Start near the button
+            const mainContentRect = mainContent.getBoundingClientRect();
+            const startLeft = buttonRect.left + buttonRect.width / 2 - mainContentRect.left;
+            const startBottom = mainContentRect.height - (buttonRect.top - mainContentRect.top + buttonRect.height / 2);
 
             icon.style.left = `${startLeft}px`;
             icon.style.bottom = `${startBottom}px`;
 
             floatingHeartsContainer.appendChild(icon);
 
-            // Remove icon after animation
             icon.addEventListener('animationend', () => {
                 icon.remove();
             });
@@ -332,107 +331,90 @@
 
         // Function to display the next main message and trigger animations
         function showNextMessage() {
-            messageIndex = (messageIndex + 1) % comfortingMessages.length; // Cycle through messages
-            comfortMessageElement.textContent = `"${comfortingMessages[messageIndex]}"`; // Update message text
+            messageIndex = (messageIndex + 1) % comfortingMessages.length;
+            comfortMessageElement.textContent = `"${comfortingMessages[messageIndex]}"`;
 
-            // Trigger floating icons animation
-            for (let i = 0; i < 3; i++) { // Create 3 icons
-                setTimeout(createFloatingIcon, i * 100); // Stagger their appearance
+            for (let i = 0; i < 3; i++) {
+                setTimeout(createFloatingIcon, i * 100);
             }
-            // Attempt to play music on user interaction
-            playBackgroundMusic();
         }
 
         // Function to show teddy bear message and animation, and speak it
         function showTeddyBearMessage() {
             const currentMessage = teddyBearMessages[teddyBearMessageIndex];
 
-            // Display message
             teddyBearMessageElement.textContent = `"${currentMessage}"`;
-            teddyBearMessageElement.classList.remove('opacity-0'); // Make visible
-            teddyBearMessageElement.classList.remove('teddy-message-fade-out'); // Remove old fade-out animation
-            void teddyBearMessageElement.offsetWidth; // Trigger reflow
+            teddyBearMessageElement.classList.remove('opacity-0');
+            teddyBearMessageElement.classList.remove('teddy-message-fade-out');
+            void teddyBearMessageElement.offsetWidth;
 
-            // Add fade out animation after a delay
             setTimeout(() => {
                 teddyBearMessageElement.classList.add('teddy-message-fade-out');
-            }, 50); // Small delay to ensure animation resets
+            }, 50);
 
-            // Trigger wobble animation on bear
-            teddyBearElement.classList.remove('teddy-wobble'); // Reset animation
-            void teddyBearElement.offsetWidth; // Trigger reflow
+            teddyBearElement.classList.remove('teddy-wobble');
+            void teddyBearElement.offsetWidth;
             teddyBearElement.classList.add('teddy-wobble');
 
-            // Speak the message
-            if (synth.speaking) { // If already speaking, stop it
+            if (synth.speaking) {
                 synth.cancel();
             }
             utterance.text = currentMessage;
             synth.speak(utterance);
 
-            // Cycle to next teddy bear message
             teddyBearMessageIndex = (teddyBearMessageIndex + 1) % teddyBearMessages.length;
-
-            // Attempt to play music on user interaction
-            playBackgroundMusic();
         }
 
-        // Function to play background music
+        // Function to play background music (only called by user interaction)
         function playBackgroundMusic() {
-            // Only attempt to play if it's currently paused
             if (backgroundMusic.paused) {
-                backgroundMusic.play().then(() => {
-                    // Playback started successfully
-                    playIcon.classList.add('hidden');
-                    pauseIcon.classList.remove('hidden');
-                }).catch(error => {
-                    // Autoplay was prevented or other error
+                backgroundMusic.play().catch(error => {
                     console.log("Music playback prevented:", error);
-                    // Keep the play icon visible if playback failed
-                    playIcon.classList.remove('hidden');
-                    pauseIcon.classList.add('hidden');
                 });
             }
         }
 
-        // Function to toggle music play/pause
-        function toggleMusic() {
-            if (backgroundMusic.paused) {
-                backgroundMusic.play().then(() => {
-                    playIcon.classList.add('hidden');
-                    pauseIcon.classList.remove('hidden');
-                }).catch(error => {
-                    console.log("Manual play prevented:", error);
-                });
-            } else {
-                backgroundMusic.pause();
-                playIcon.classList.remove('hidden');
-                pauseIcon.classList.add('hidden');
-            }
-        }
+        // New: Function to handle the "Tap to Continue" interaction
+        function handleTapToContinue() {
+            // Remove the tap listener to prevent multiple triggers
+            tapToContinueElement.removeEventListener('click', handleTapToContinue);
+            tapToContinueElement.removeEventListener('touchend', handleTapToContinue);
 
-        // Add event listeners
-        nextMessageBtn.addEventListener('click', showNextMessage);
-        nextMessageBtn.addEventListener('touchend', showNextMessage); // For touch devices
-        teddyBearElement.addEventListener('click', showTeddyBearMessage); // Teddy bear click listener
-        teddyBearElement.addEventListener('touchend', showTeddyBearMessage); // Teddy bear touch listener
-        musicControlBtn.addEventListener('click', toggleMusic); // Music control button listener
+            // Start music playback
+            playBackgroundMusic();
 
-
-        // Function to hide animation and show main content
-        function showMainContent() {
+            // Initiate the transition to main content
             flowerAnimationContainer.style.opacity = '0'; // Start fade out
-            setTimeout(() => {
+
+            // Listen for the end of the opacity transition
+            flowerAnimationContainer.addEventListener('transitionend', function handler() {
                 flowerAnimationContainer.style.display = 'none'; // Hide after fade
                 mainContent.style.display = 'flex'; // Show main content
                 document.body.style.overflow = 'auto'; // Re-enable scrolling if needed
-            }, 1000); // Matches the CSS transition duration
+
+                // Remove the event listener to prevent it from firing again
+                flowerAnimationContainer.removeEventListener('transitionend', handler);
+            });
         }
 
-        // Automatically hide animation and show content after a delay
-        // The animation itself takes about 3 seconds, plus a little buffer
+        // Add event listeners for main content
+        nextMessageBtn.addEventListener('click', showNextMessage);
+        nextMessageBtn.addEventListener('touchend', showNextMessage);
+        teddyBearElement.addEventListener('click', showTeddyBearMessage);
+        teddyBearElement.addEventListener('touchend', showTeddyBearMessage);
+
+
+        // Initial setup on window load
         window.onload = function() {
-            setTimeout(showMainContent, 3500); // Adjust this delay as needed for animation duration
+            // After the initial flower bloom animation (3s)
+            // and an additional delay (e.g., 0.5s) for the text to appear
+            setTimeout(() => {
+                tapToContinueElement.classList.remove('opacity-0'); // Make tap text visible
+                tapToContinueElement.classList.add('pulse-animation'); // Add pulse animation
+                // Add event listeners to the tap to continue element
+                tapToContinueElement.addEventListener('click', handleTapToContinue);
+                tapToContinueElement.addEventListener('touchend', handleTapToContinue);
+            }, 3500); // This delay should match the flower animation duration + a bit
         };
 
     </script>
